@@ -11,7 +11,7 @@ class PlayArea : public QWidget
 {
     Q_OBJECT
 
-    int height = 16, width = 16, mines = 12;
+    int height = 16, width = 16, mines = 24;
     Cell **area;
     QGridLayout *grid;
 
@@ -20,10 +20,11 @@ public:
     void PrepareArea();
     int minesAround(int x, int y);
     bool inArea(int x,int y);
+    void bfs(int x, int y);
 
 protected:
     virtual void mouseReleaseEvent(QMouseEvent *e);
-
+    virtual void mousePressEvent(QMouseEvent *e);
 signals:
 
 };
