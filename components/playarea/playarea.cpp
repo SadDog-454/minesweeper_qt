@@ -1,16 +1,27 @@
 #include "playarea.h"
 
 PlayArea::PlayArea(QWidget *parent) : QWidget(parent){
-    cell = new QLabel*[height];
-    for(int i = 0; i < height; ++i) cell[i] = new QLabel[width];
+    area = new Cell*[height];
+    for(int i = 0; i < height; ++i) area[i] = new Cell[width];
     grid = new QGridLayout;
     grid->setSpacing(0);
     for(int i = 0; i < height; i++)
         for(int j = 0; j < width; j++){
-            cell[i][j].setFrameStyle(QFrame::Panel | QFrame::Raised);
-            cell[i][j].setLineWidth(3);
-            cell[i][j].setFixedSize(20,20);
-            grid->addWidget(&cell[i][j],i,j);
+            grid->addWidget(&area[i][j],i,j);
         }
     setLayout(grid);
+    PrepareArea();
 }
+
+void PlayArea::PrepareArea(){
+    int mines_set = 0;
+    while(mines_set != mines){
+        int y = rand() % height , x = rand() % width;
+        if(!area[y][x].isMine()) {
+            area[y][x].setMine();
+            area[y][x].setText("*");
+            mines_set++;
+        }
+    }
+}
+

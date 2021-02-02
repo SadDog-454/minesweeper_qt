@@ -4,16 +4,20 @@
 #include <QWidget>
 #include <QLabel>
 #include <QGridLayout>
+#include <QMouseEvent>
+#include "components/cell/cell.h"
 
 class PlayArea : public QWidget
 {
     Q_OBJECT
-public:
-    explicit PlayArea(QWidget *parent = nullptr);
 
     int height = 16, width = 16, mines = 12;
-    QLabel **cell;
+    Cell **area;
     QGridLayout *grid;
+
+public:
+    explicit PlayArea(QWidget *parent = nullptr);
+    void PrepareArea();
 
 signals:
 
