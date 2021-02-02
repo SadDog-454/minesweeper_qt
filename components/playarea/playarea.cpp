@@ -84,13 +84,31 @@ void PlayArea::mouseReleaseEvent(QMouseEvent *e)
     int y = e->y()/20 , x = e->x()/20;
     if(inArea(x,y))
         if(e->button() == Qt::LeftButton && !area[y][x].isFlag()){
-        if(first_click){
-            first_click = false;
-            PrepareArea(x,y);
+            if(first_click){
+                first_click = false;
+                PrepareArea(x,y);
+            }
+            if(area[y][x].isMine()) showBombs();
+            else bfs(x,y);
         }
-        if(area[y][x].isMine()) showBombs();
-        else bfs(x,y);
-     }
+        else if(e->button() == Qt::MiddleButton && !area[y][x].isFlag()){
+            if(area[y][x].isVisit()){
+                int flags = 0;
+                for(int i = 0; i < 9; i++){
+                    if(inArea(x - 1 + i % 3,y - 1 + i / 3))
+                        if(area[y - 1 + i / 3][x - 1 + i % 3].isFlag())flags++;
+                }
+                if(flags == minesAround(x,y)){
+                    for(int i = 0; i < 9; i++){
+                        if(inArea(x - 1 + i % 3,y - 1 + i / 3))
+                            if(!area[y - 1 + i / 3][x - 1 + i % 3].isFlag())
+                                if(area[y - 1 + i / 3][x - 1 + i % 3].isMine())showBombs();
+                                else bfs(x - 1 + i % 3,y - 1 + i / 3);
+                    }
+                }
+            }
+
+        }
 }
 
 void PlayArea::mousePressEvent(QMouseEvent *e){
@@ -98,8 +116,16 @@ void PlayArea::mousePressEvent(QMouseEvent *e){
     if(e->button() == Qt::RightButton && !area[y][x].isVisit()){
         area[y][x].setFlag();
         area[y][x].setText(area[y][x].isFlag() ? "F" : " ");
-    }else if(e->button() == Qt::LeftButton) left = true;
-    else if(e->button() == Qt::MiddleButton) mid = true;
+    }else if(e->button() == Qt::LeftButton){
+        area[y][x].setFrameStyle(QFrame::Panel | QFrame::Sunken);
+        left = true;
+    }
+    else if(e->button() == Qt::MiddleButton){
+        for(int i = 0; i < 9; ++i){
+            if(inArea(x - 1 + i % 3,y - 1 + i / 3)) area[y - 1 + i / 3][x - 1 + i % 3].setFrameStyle(QFrame::Panel | QFrame::Sunken);
+        }
+        mid = true;
+    }
 }
 
 void PlayArea::mouseMoveEvent(QMouseEvent *e)
