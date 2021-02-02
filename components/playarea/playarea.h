@@ -13,6 +13,7 @@ class PlayArea : public QWidget
 
     int height = 16, width = 16, mines = 26;
     bool first_click = true;
+    bool left = false, mid = false;
     Cell **area;
     QGridLayout *grid;
 
@@ -23,10 +24,12 @@ public:
     bool inArea(int x,int y);
     void showBombs();
     void bfs(int x, int y);
+    void clear();
 
 protected:
     virtual void mouseReleaseEvent(QMouseEvent *e);
     virtual void mousePressEvent(QMouseEvent *e);
+    virtual void mouseMoveEvent(QMouseEvent *e);
 signals:
 
 };
