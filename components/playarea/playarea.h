@@ -5,6 +5,7 @@
 #include <QLabel>
 #include <QGridLayout>
 #include <QMouseEvent>
+#include <QMessageBox>
 #include "components/cell/cell.h"
 
 class PlayArea : public QWidget
@@ -23,8 +24,11 @@ public:
     int minesAround(int x, int y);
     bool inArea(int x,int y);
     void showBombs();
+    void disableField();
     void bfs(int x, int y);
     void clear();
+    void gameOver();
+    void win();
 
 protected:
     virtual void mouseReleaseEvent(QMouseEvent *e);

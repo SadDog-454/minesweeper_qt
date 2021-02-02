@@ -47,6 +47,11 @@ void PlayArea::showBombs(){
             else if(area[i][j].isFlag())area[i][j].setText("#");
 }
 
+void PlayArea::disableField()
+{
+    setDisabled(true);
+}
+
 void PlayArea::bfs(int x, int y){
     QQueue<QPoint> q;
     q.push_back(QPoint(x,y));
@@ -76,6 +81,30 @@ void PlayArea::clear()
         }
 }
 
+void PlayArea::gameOver()
+{
+    showBombs();
+    disableField();
+
+    QMessageBox *msg = new QMessageBox;
+    msg->setText("Game Over");
+    msg->exec();
+}
+
+void PlayArea::win()
+{
+    for(int i = 0; i < height ; ++i)
+        for(int j = 0; j < width ; ++j){
+            if(!area[i][j].isVisit() && !area[i][j].isMine()) return;
+        }
+    showBombs();
+    disableField();
+
+    QMessageBox *msg = new QMessageBox;
+    msg->setText("You Win!");
+    msg->exec();
+}
+
 void PlayArea::mouseReleaseEvent(QMouseEvent *e)
 {
     left = false;
@@ -88,7 +117,7 @@ void PlayArea::mouseReleaseEvent(QMouseEvent *e)
                 first_click = false;
                 PrepareArea(x,y);
             }
-            if(area[y][x].isMine()) showBombs();
+            if(area[y][x].isMine()) gameOver();
             else bfs(x,y);
         }
         else if(e->button() == Qt::MiddleButton && !area[y][x].isFlag()){
@@ -102,13 +131,14 @@ void PlayArea::mouseReleaseEvent(QMouseEvent *e)
                     for(int i = 0; i < 9; i++){
                         if(inArea(x - 1 + i % 3,y - 1 + i / 3))
                             if(!area[y - 1 + i / 3][x - 1 + i % 3].isFlag())
-                                if(area[y - 1 + i / 3][x - 1 + i % 3].isMine())showBombs();
+                                if(area[y - 1 + i / 3][x - 1 + i % 3].isMine())gameOver();
                                 else bfs(x - 1 + i % 3,y - 1 + i / 3);
                     }
                 }
             }
 
         }
+    win();
 }
 
 void PlayArea::mousePressEvent(QMouseEvent *e){
