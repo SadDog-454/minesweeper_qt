@@ -11,15 +11,17 @@ class PlayArea : public QWidget
 {
     Q_OBJECT
 
-    int height = 16, width = 16, mines = 24;
+    int height = 16, width = 16, mines = 26;
+    bool first_click = true;
     Cell **area;
     QGridLayout *grid;
 
 public:
     explicit PlayArea(QWidget *parent = nullptr);
-    void PrepareArea();
+    void PrepareArea(int i, int j);
     int minesAround(int x, int y);
     bool inArea(int x,int y);
+    void showBombs();
     void bfs(int x, int y);
 
 protected:

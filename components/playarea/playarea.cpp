@@ -12,16 +12,16 @@ PlayArea::PlayArea(QWidget *parent) : QWidget(parent){
             grid->addWidget(&area[i][j],i,j);
         }
     setLayout(grid);
-    PrepareArea();
 }
 
-void PlayArea::PrepareArea(){
+void PlayArea::PrepareArea(int i,int j){
+    srand(time(0));
     int mines_set = 0;
     while(mines_set != mines){
         int y = rand() % height , x = rand() % width;
-        if(!area[y][x].isMine()) {
+        if(!area[y][x].isMine() && !( x == i && y == j)) {
             area[y][x].setMine();
-            area[y][x].setText("*");
+            //area[y][x].setText("*");
             mines_set++;
         }
     }
@@ -38,6 +38,13 @@ int PlayArea::minesAround(int x, int y){
 
 bool PlayArea::inArea(int x, int y){
     return (x >= 0 && x < width && y >= 0 && y < height);
+}
+
+void PlayArea::showBombs(){
+    for(int i = 0; i < height; ++i)
+        for(int j = 0; j < width; ++j)
+            if(area[i][j].isMine())area[i][j].setText("*");
+            else if(area[i][j].isFlag())area[i][j].setText("#");
 }
 
 void PlayArea::bfs(int x, int y){
@@ -63,14 +70,17 @@ void PlayArea::bfs(int x, int y){
 void PlayArea::mouseReleaseEvent(QMouseEvent *e)
 {
     if(e->button() == Qt::LeftButton && !area[e->y()/20][e->x()/20].isFlag()){
-//        area[e->y()/20][e->x()/20].setFrameStyle(QFrame::Panel | QFrame::Sunken);
-//        area[e->y()/20][e->x()/20].setText(QString::number(minesAround(e->x()/20,e->y()/20)));
-        bfs(e->x()/20,e->y()/20);
+        if(first_click){
+            first_click = false;
+            PrepareArea(e->x()/20,e->y()/20);
+        }
+        if(area[e->y()/20][e->x()/20].isMine()) showBombs();
+        else bfs(e->x()/20,e->y()/20);
     }
 }
 
 void PlayArea::mousePressEvent(QMouseEvent *e){
-    if(e->button() == Qt::RightButton){
+    if(e->button() == Qt::RightButton && !area[e->y()/20][e->x()/20].isVisit()){
         area[e->y()/20][e->x()/20].setFlag();
         area[e->y()/20][e->x()/20].setText(area[e->y()/20][e->x()/20].isFlag() ? "F" : " ");
     }
