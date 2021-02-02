@@ -18,6 +18,11 @@ class PlayArea : public QWidget
 public:
     explicit PlayArea(QWidget *parent = nullptr);
     void PrepareArea();
+    int minesAround(int x, int y);
+    bool inArea(int x,int y);
+
+protected:
+    virtual void mouseReleaseEvent(QMouseEvent *e);
 
 signals:
 
